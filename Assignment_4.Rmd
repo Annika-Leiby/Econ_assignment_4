@@ -201,6 +201,54 @@ L = ((sum_0-sum_4.4)/(sum_0))*100
 ```
 
 ```{r}
-#B. 
+#B. Perform a sensitivity analysis to see how sensitive your calculation of L is to the following parameters: T, g, η, and β. To do so, calculate the % change in L that arises from a 10% increase in each of these parameters.
+
+# Sensivitvity analysis to a 10% increases in T. 
+# 4.4(.10) = .44 
+# 4.4 + .44 = 4.84
+# A 10% increase in T is 4.84. 
+
+temp_4.84_time <- years %>%
+  mutate(climate_change = temp(t=year, T = 4.84))
+
+activity_4.84_time <- temp_4.84_time %>%
+  mutate(climate_change = activity(t = climate_change, B = 0.05))
+
+consumption_4.84_time <- activity_4.84_time %>%
+  mutate(climate_change = consumption(activity = climate_change, g = 0.01, t = year))
+
+utility_4.84_time <- consumption_4.84_time %>%
+  mutate(climate_change = utility(consumption = climate_change, n = 0.5))
+
+pv_4.84_time <- utility_4.84_time %>%
+  mutate(climate_change = pv(utility = climate_change, t = year, r = 0.01))
+
+sum_4.84 <- sum(pv_4.84_time$climate_change)
+
+#The present value at T = 4.84 from years 1-200 is 189.421. 
+
+#What is the percentage loss in present value utility from climate change of 4.84  (call this L 4.84)?
+
+L_4.84 = ((sum_0-sum_4.84)/(sum_0))*100
+
+#The percentage loss in present value utility from climate change of T = 4.84 is 25.797%. 
+
 ```
+
+```{r}
+# Sensivitvity analysis to a 10% increases in g. 
+
+```
+
+```{r}
+# Sensivitvity analysis to a 10% increases in n. 
+```
+
+```{r}
+# Sensivitvity analysis to a 10% increases in B. 
+```
+
+
+
+
 
