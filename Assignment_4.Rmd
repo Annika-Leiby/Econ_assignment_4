@@ -225,46 +225,43 @@ pv_4.84_time <- utility_4.84_time %>%
 
 sum_4.84 <- sum(pv_4.84_time$climate_change)
 
-#The present value at T = 4.84 from years 1-200 is 189.421. 
+# When T = 4.4 is increased by 10% to T = 4.84 the new sum is 189.421.
 
-#What is the percentage loss in present value utility from climate change of 4.84  (call this L_4.84)?
+L_4.84 = ((sum_4.4-sum_4.84)/(sum_4.4))*100
 
-L_4.84 = ((sum_0-sum_4.84)/(sum_0))*100
-
-#The percentage loss in present value utility from climate change of T = 4.84 is 25.797%. 
+#Percent change for a 10% increase in T is 4.651%. 
 
 ```
 
 ```{r}
-# Sensivitvity analysis to a 10% increases in g. 
+# Sensivity analysis to a 10% increases in g. 
 # 0.01(.1) = .001 
 # 0.01+.001 = 0.011
 # g with a 10% increase is 0.011. 
 
-g_temp_time<- years %>%
-  mutate(none = temp(t=year, T = 0))
+temp_g_time <- years %>%
+  mutate(climate_change = temp(t=year, T = 4.4))
 
-g_activity_time <- g_temp_time %>%
-  mutate(none = activity(t = none, B = 0.05))
+activity_g_time <- temp_g_time %>%
+  mutate(climate_change = activity(t = climate_change, B = 0.05))
 
-g_consumption_time <- g_activity_time %>%
-  mutate(none = consumption(activity = none, g = 0.011, t = year))
+consumption_g_time <- activity_g_time %>%
+  mutate(climate_change = consumption(activity = climate_change, g = 0.011, t = year))
 
-g_utility_time <- g_consumption_time %>%
-  mutate(none = utility(consumption = none, n = 0.5))
+utility_g_time <- consumption_g_time %>%
+  mutate(climate_change = utility(consumption = climate_change, n = 0.5))
 
-g_pv_time <- g_utility_time %>%
-  mutate(none = pv(utility = none, t = year, r = 0.01))
+pv_g_time <- utility_g_time %>%
+  mutate(climate_change = pv(utility = climate_change, t = year, r = 0.0105))
 
-sum_g <- sum(g_pv_time$none)
+sum_g <- sum(pv_g_time$climate_change)
 
-#The present value when there is a 10% increase in g from years 1-200 is 266.277. 
+# When g is increased by 10% to g = 0.011 the new sum is 198.735.
 
-#What is the percentage loss in present value utility when there is a 10% increase in g (call this L_g?
+L_g = ((sum_4.4-sum_g)/(sum_4.4))*100
 
-L_g = ((sum_0-sum_g)/(sum_0))*100
+#Percent change for a 10% increase in T is -0.037%. 
 
-#The percentage loss in present value utility from 10% increase in g is -4.311%. 
 
 ```
 
@@ -274,30 +271,28 @@ L_g = ((sum_0-sum_g)/(sum_0))*100
 # 0.5+.05 = 0.55
 # g with a 10% increase is 0.55. 
 
-n_temp_time<- years %>%
-  mutate(none = temp(t=year, T = 0))
+temp_n_time <- years %>%
+  mutate(climate_change = temp(t=year, T = 4.4))
 
-n_activity_time <- n_temp_time %>%
-  mutate(none = activity(t = none, B = 0.05))
+activity_n_time <- temp_n_time %>%
+  mutate(climate_change = activity(t = climate_change, B = 0.05))
 
-n_consumption_time <- n_activity_time %>%
-  mutate(none = consumption(activity = none, g = 0.01, t = year))
+consumption_n_time <- activity_n_time %>%
+  mutate(climate_change = consumption(activity = climate_change, g = 0.01, t = year))
 
-n_utility_time <- n_consumption_time %>%
-  mutate(none = utility(consumption = none, n = 0.55))
+utility_n_time <- consumption_n_time %>%
+  mutate(climate_change = utility(consumption = climate_change, n = 0.55))
 
-n_pv_time <- n_utility_time %>%
-  mutate(none = pv(utility = none, t = year, r = 0.01))
+pv_n_time <- utility_n_time %>%
+  mutate(climate_change = pv(utility = climate_change, t = year, r = 0.0105))
 
-sum_n <- sum(n_pv_time$none)
+sum_n <- sum(pv_n_time$climate_change)
 
-#The present value when there is a 10% increase in n from years 1-200 is 272.134. 
+# When n is increased by 10% to n = 0.55 the new sum is 210.185.
 
-#What is the percentage loss in present value utility when there is a 10% increase in n (call this L_n?
+L_n = ((sum_4.4-sum_n)/(sum_4.4))*100
 
-L_n = ((sum_0-sum_n)/(sum_0))*100
-
-#The percentage loss in present value utility from 10% increase in n is -6.605%. 
+#Percent change for a 10% increase in T is -5.801%. 
 
 ```
 
@@ -307,33 +302,41 @@ L_n = ((sum_0-sum_n)/(sum_0))*100
 # 0.05+.005 = .055
 # B with a 10% increase is 0.055. 
 
-B_temp_time<- years %>%
-  mutate(none = temp(t=year, T = 0))
+temp_B_time <- years %>%
+  mutate(climate_change = temp(t=year, T = 4.4))
 
-B_activity_time <- B_temp_time %>%
-  mutate(none = activity(t = none, B = 0.055))
+activity_B_time <- temp_B_time %>%
+  mutate(climate_change = activity(t = climate_change, B = 0.055))
 
-B_consumption_time <- B_activity_time %>%
-  mutate(none = consumption(activity = none, g = 0.01, t = year))
+consumption_B_time <- activity_B_time %>%
+  mutate(climate_change = consumption(activity = climate_change, g = 0.01, t = year))
 
-B_utility_time <- B_consumption_time %>%
-  mutate(none = utility(consumption = none, n = 0.5))
+utility_B_time <- consumption_B_time %>%
+  mutate(climate_change = utility(consumption = climate_change, n = 0.5))
 
-B_pv_time <- B_utility_time %>%
-  mutate(none = pv(utility = none, t = year, r = 0.01))
+pv_B_time <- utility_B_time %>%
+  mutate(climate_change = pv(utility = climate_change, t = year, r = 0.01))
 
-sum_B <- sum(B_pv_time$none)
+sum_B <- sum(pv_B_time$climate_change)
 
-#The present value when there is a 10% increase in B from years 1-200 is 255.273.
+# When n is increased by 10% to n = 0.55 the new sum is 194.165.
 
-#What is the percentage loss in present value utility when there is a 10% increase in B (call this L_B?
+L_B = ((sum_4.4-sum_B)/(sum_4.4))*100
 
-L_B = ((sum_0-sum_B)/(sum_0))*100
-
-#The percentage loss in present value utility from 10% increase in B is 0%. 
+#Percent change for a 10% increase in T is 2.264%. 
 
 ```
 
+```{r}
+#Sensitivty Analysis Results: 
+# 10% increase T: 4.651
+# 10% increase g: -0.037
+# 10% increase n: -5.801
+# 10% increase B: 2.264
+
+# The parameter that has the largest effect on the percent loss in present value utility is n. 
+
+```
 
 
 
