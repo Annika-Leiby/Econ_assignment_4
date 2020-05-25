@@ -227,7 +227,7 @@ sum_4.84 <- sum(pv_4.84_time$climate_change)
 
 #The present value at T = 4.84 from years 1-200 is 189.421. 
 
-#What is the percentage loss in present value utility from climate change of 4.84  (call this L 4.84)?
+#What is the percentage loss in present value utility from climate change of 4.84  (call this L_4.84)?
 
 L_4.84 = ((sum_0-sum_4.84)/(sum_0))*100
 
@@ -237,11 +237,68 @@ L_4.84 = ((sum_0-sum_4.84)/(sum_0))*100
 
 ```{r}
 # Sensivitvity analysis to a 10% increases in g. 
+# 0.01(.1) = .001 
+# 0.01+.001 = 0.011
+# g with a 10% increase is 0.011. 
+
+g_temp_time<- years %>%
+  mutate(none = temp(t=year, T = 0))
+
+g_activity_time <- g_temp_time %>%
+  mutate(none = activity(t = none, B = 0.05))
+
+g_consumption_time <- g_activity_time %>%
+  mutate(none = consumption(activity = none, g = 0.011, t = year))
+
+g_utility_time <- g_consumption_time %>%
+  mutate(none = utility(consumption = none, n = 0.5))
+
+g_pv_time <- g_utility_time %>%
+  mutate(none = pv(utility = none, t = year, r = 0.01))
+
+sum_g <- sum(g_pv_time$none)
+
+#The present value when there is a 10% increase in g from years 1-200 is 266.277. 
+
+#What is the percentage loss in present value utility when there is a 10% increase in g (call this L_g?
+
+L_g = ((sum_0-sum_g)/(sum_0))*100
+
+#The percentage loss in present value utility from 10% increase in g is -4.311%. 
 
 ```
 
 ```{r}
 # Sensivitvity analysis to a 10% increases in n. 
+# 0.5(.1) = .05
+# 0.5+.05 = 0.55
+# g with a 10% increase is 0.55. 
+
+n_temp_time<- years %>%
+  mutate(none = temp(t=year, T = 0))
+
+n_activity_time <- n_temp_time %>%
+  mutate(none = activity(t = none, B = 0.05))
+
+n_consumption_time <- n_activity_time %>%
+  mutate(none = consumption(activity = none, g = 0.01, t = year))
+
+n_utility_time <- n_consumption_time %>%
+  mutate(none = utility(consumption = none, n = 0.55))
+
+n_pv_time <- n_utility_time %>%
+  mutate(none = pv(utility = none, t = year, r = 0.01))
+
+sum_n <- sum(n_pv_time$none)
+
+#The present value when there is a 10% increase in n from years 1-200 is 272.134. 
+
+#What is the percentage loss in present value utility when there is a 10% increase in n (call this L_n?
+
+L_n = ((sum_0-sum_n)/(sum_0))*100
+
+#The percentage loss in present value utility from 10% increase in n is -6.605%. 
+
 ```
 
 ```{r}
