@@ -303,6 +303,35 @@ L_n = ((sum_0-sum_n)/(sum_0))*100
 
 ```{r}
 # Sensivitvity analysis to a 10% increases in B. 
+# 0.05(.1) = .005
+# 0.05+.005 = .055
+# B with a 10% increase is 0.055. 
+
+B_temp_time<- years %>%
+  mutate(none = temp(t=year, T = 0))
+
+B_activity_time <- B_temp_time %>%
+  mutate(none = activity(t = none, B = 0.055))
+
+B_consumption_time <- B_activity_time %>%
+  mutate(none = consumption(activity = none, g = 0.01, t = year))
+
+B_utility_time <- B_consumption_time %>%
+  mutate(none = utility(consumption = none, n = 0.5))
+
+B_pv_time <- B_utility_time %>%
+  mutate(none = pv(utility = none, t = year, r = 0.01))
+
+sum_B <- sum(B_pv_time$none)
+
+#The present value when there is a 10% increase in B from years 1-200 is 255.273.
+
+#What is the percentage loss in present value utility when there is a 10% increase in B (call this L_B?
+
+L_B = ((sum_0-sum_B)/(sum_0))*100
+
+#The percentage loss in present value utility from 10% increase in B is 0%. 
+
 ```
 
 
