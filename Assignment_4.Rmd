@@ -1,0 +1,206 @@
+---
+title: "Assignment 4"
+author: "Raymond Boffman, Annika Leiby, Joanne Pham"
+date: "5/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+#Install Packages 
+
+library(janitor)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+#Setting up the parameters of the functions so we can easily call them up in our functions later. 
+
+B = 0.05
+g = 0.01
+d = 0.005
+n = 0.5
+r = d + n*g
+  
+# r is the disount rate equation given by the Ramsey Rule.
+
+#Setting up the temperature function relative to the temperature at time (t) = 0.  
+#Temperature increases linearly over time then flattens at t = 100.
+#Given function: τ (t) = min(T t/100, T )
+
+temp = function(t,T)
+{
+  out = pmin((t*T)/100, T)
+  return(out)
+}
+
+#Setting up fraction of economic activity retained function.
+#Economic activity reduces as heat increases through time. 
+#Given function: K(t) = exp(−βτ(t)2)
+
+activity = function(temp, B)
+{
+  out = exp(-B*(temp)^2)
+  return(out)
+}
+
+#Setting up economic activity consumption function. 
+#Economic consumption grows over time at rate g, but is reduced by K() above. 
+#Given function: C(t) = K(t)exp(gt)
+
+consumption = function(activity, g, t)
+{
+  out = activity*exp(g*t)
+  return(out)
+}
+
+#Setting up utility function. 
+#Given function: U(C) = C^(1-n) / 1-n
+
+utility = function(consumption, n)
+{
+  out = (consumption^(1-n))/(1-n)
+  return(out)
+}
+```
+
+```{r}
+#Part 1: Plots
+
+#A. Plot of temperature over time for no climate change (T = 0), with modest climate change (T = 2), and with extreme climate change (T = 8).
+
+#Set up a data frame for years with years from 0 to 200.And use mutuate to create a column for T = 0, T = 2, T = 8 and calculate values using the temperature equation. 
+
+years <- data.frame(
+  year = seq(from = 0, to =200, by = 1))
+
+temp_time<- years %>%
+  mutate(none = temp(t=year, T = 0),
+         modest = temp(t=year, T = 2),
+         extreme = temp(t=year, T = 8))
+
+ggplot(temp_time, aes(x = year)) +
+  geom_line(aes(y = none, color = "none")) +
+  geom_line(aes(y = modest, color = "modest")) +
+  geom_line(aes(y = extreme, color = "extreme"))+
+  theme_minimal()+
+  labs(x = "Time (Years)",
+         y = "Temperature Increase Relative to Year 0",
+         title = "Temperature Increase Over Time for Three Climate Scenarios") +
+  labs(colour="Climate Scenario")
+  
+
+```
+
+```{r}
+#B. Plot of consumption over time for no climate change, modest climate change, and extreme climate change.
+
+#Use data frame for years created in part a. Use mutuate to create a column for T = 0, T = 2, T = 8 and calculate values using the consumption equation. 
+
+activity_time <- temp_time %>%
+  mutate(none = activity(t = none, B = 0.05),
+         modest = activity(t = modest, B = 0.05 ),
+         extreme = activity(t = extreme, B = 0.05))
+
+consumption_time <- activity_time %>%
+  mutate(none = consumption(activity = none, g = 0.01, t = year),
+         modest = consumption(activity = modest, g = 0.01, t = year),
+         extreme = consumption(activity = extreme, g = 0.01, t = year))
+
+ggplot(consumption_time, aes(x = year)) +
+  geom_line(aes(y = none, color = "none")) +
+  geom_line(aes(y = modest, color = "modest")) +
+  geom_line(aes(y = extreme, color = "extreme"))+
+  theme_minimal()+
+  labs(x = "Time (Years)",
+         y = "Consumption Relative to Year 0",
+         title = "Economic Consumption Over Time for Three Climate Scenarios") +
+  labs(colour="Climate Scenario")
+
+
+
+```
+
+```{r}
+#C. Plot of undiscounted utility over time for no climate change, modest climate change, and extreme climate change
+
+utility_time <- consumption_time %>%
+  mutate(none = utility(consumption = none, n = 0.5),
+         modest = utility(consumption = modest, n = 0.5),
+         extreme = utility(consumption = extreme, n = 0.5))
+
+ggplot(utility_time, aes(x = year)) +
+  geom_line(aes(y = none, color = "none")) +
+  geom_line(aes(y = modest, color = "modest")) +
+  geom_line(aes(y = extreme, color = "extreme"))+
+  theme_minimal()+
+  labs(x = "Time (Years)",
+         y = "Utility Relative to Year 0",
+         title = "Utility Over Time for Three Climate Scenarios") +
+  labs(colour="Climate Scenario")
+
+```
+
+```{r}
+#Part 2
+# A. Suppose T = 4.4. In other words, suppose we know for sure that under BAU, climate change will eventually lead to a 4.4 degree increase in temperature.  
+
+#Create discounted utility function using the original utility equation this is the present value function. 
+pv = function(utility, r, t)
+{
+  out = (utility)/((1+r)^t)
+  return(out)}
+
+#What is the present value (i.e. discounted) utility over the next 200 years with climate change?
+#Add up all of the PV values from year 1 to 200 when T = 4.4. 
+
+temp_4.4_time <- years %>%
+  mutate(climate_change = temp(t=year, T = 4.4))
+
+activity_4.4_time <- temp_4.4_time %>%
+  mutate(climate_change = activity(t = climate_change, B = 0.05))
+
+consumption_4.4_time <- activity_4.4_time %>%
+  mutate(climate_change = consumption(activity = climate_change, g = 0.01, t = year))
+
+utility_4.4_time <- consumption_4.4_time %>%
+  mutate(climate_change = utility(consumption = climate_change, n = 0.5))
+
+pv_4.4_time <- utility_4.4_time %>%
+  mutate(climate_change = pv(utility = climate_change, t = year, r = 0.01))
+
+
+#Then sum up the values under climate_change in the pv_4.4_time data frame.
+
+sum_4.4 <- sum(pv_4.4_time$climate_change)
+
+#The present value at T = 4.4 from years 1-200 is 198.661. 
+         
+#What is the present value utility without climate change?
+#Took the original utility equation and put it into the pv equation only for when T = 0 or there is no climate change. Then sum up the no climate change values for all years. 
+
+pv_0_time <- utility_time %>%
+mutate(none = pv(utility = none, t = year, r = 0.01))
+
+sum_0 <- sum(pv_0_time$none)
+
+#The present value at T = 0 or at no climate change from years 1-200 is 255.273. 
+
+#What is the percentage loss in present value utility from climate change (call this L)?
+
+L = ((sum_0-sum_4.4)/(sum_0))*100
+
+#The percentage loss in present value utility from climate change is 22.177%. 
+```
+
+```{r}
+#B. 
+```
+
