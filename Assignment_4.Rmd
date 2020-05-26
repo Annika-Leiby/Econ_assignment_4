@@ -1,15 +1,47 @@
 ---
-title: "Assignment 4"
+title: "Econ Assignment 4"
 author: "Raymond Boffman, Annika Leiby, Joanne Pham"
-date: "5/24/2020"
+date: "5/27/2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 ```
 
+### Initial Set Up 
 
+**Step 1:** Defined the given variable as follows:
+
+B = 0.05
+
+g = 0.01
+
+d = 0.005
+
+n = 0.5
+
+r = d + n*g
+
+Where r is the discount rate equation given by the Ramsey Rule. 
+
+
+**Step 2:** Set up functions for temperature, economic activity retention, economic consumption , economic utility defining the inputs and outputs of each function.
+
+  **Temperature:**  function(t,T),
+                    out = min((t*T)/100, T) 
+                    
+  **Activity (retention):**  function(temp, B),
+                             out = exp(-B*(temp)^2)
+                             
+  **Consumption:**  function(activity, g, t),
+                    out = activity*exp(g*t)
+                    
+  **Utility:**  function(consumption, n),
+                out = (consumption^(1-n))/(1-n)
+  
+                            
+              
 ```{r}
 #Install Packages 
 
@@ -71,8 +103,15 @@ utility = function(consumption, n)
 }
 ```
 
+
+### Part 1: Plots
+
+##### A) Plot of temperature over time for no climate change (T = 0), modest climate change (T = 2), and extreme climate change (T = 8).
+
+Set up a data frame for years with years from 0 to 200. And used mutuate to create a column for T = 0, T = 2, T = 8. Calculate values for T = 0, T = 2, and T = 8 using the temperature equation. 
+
+
 ```{r}
-#Part 1: Plots
 
 #A. Plot of temperature over time for no climate change (T = 0), with modest climate change (T = 2), and with extreme climate change (T = 8).
 
@@ -98,7 +137,14 @@ ggplot(temp_time, aes(x = year)) +
   
 
 ```
+Line plot showing the temperature increases relative to year 0 for a 200 year period for three different climate scenarios.
 
+The extreme climate scenario marked by the red line increases linearly then levels off at year 100 at 8 degrees of temperature increase. The modest climate scenario marked by the green line also follows the same linear pattern but its inital increase is not quite as substantial as it levels off at 2 degrees of temperature increase at year 100. The no climate change scenario evident by the blue line remains at 0 degrees temperature increase for the entire 200 years. 
+
+##### B) Plot of consumption over time for no climate change (T = 0), modest climate change (T = 2), and extreme climate change (T = 8).
+
+
+Used the data frame for years created in part a and mutuated to create a column for T = 0, T = 2, T = 8. Values were then calculates using the consumption equation. 
 ```{r}
 #B. Plot of consumption over time for no climate change, modest climate change, and extreme climate change.
 
@@ -128,6 +174,12 @@ ggplot(consumption_time, aes(x = year)) +
 
 ```
 
+Line plot showing the consumption changes relative to year 0 for a 200 year period for three different climate scenarios.
+
+The extreme climate scenario marked by the red line decreases from years 0 to 100 then increases very slightly from years 100 to 200. The modest climate scenario marked by the green line increases linearly up until year 100 then folows more of a exponential growth curve pattern from years 100-200. The no climate change scenario evident by the blue line looks to follow almost an exponential growth curve patter from years 0 to 200. 
+
+##### C) Plot of undiscounted utility over time for no climate change (T = 0), modest climate change (T = 2), and extreme climate change (T = 8).
+
 ```{r}
 #C. Plot of undiscounted utility over time for no climate change, modest climate change, and extreme climate change
 
@@ -147,6 +199,37 @@ ggplot(utility_time, aes(x = year)) +
   labs(colour="Climate Scenario")
 
 ```
+
+Line plot showing the undiscounted utility changes relative to year 0 for a 200 year period for three different climate scenarios.
+
+The extreme climate scenario marked by the red line decreases from years 0 to 100 then increases very slightly from years 100 to 200. The modest climate scenario marked by the green line increases linearly up until year 100 then increases more subtanially from years 100-200. The no climate change scenario evident by the blue line also increases from years 0 to 100 then experiences more substantial increase rates from years 100-200. 
+
+### Part 2
+
+##### A) Suppose we know for sure that under BAU, climate change will eventually lead to a 4.4 degree increase in temperature so T = 4.4.
+
+**i.** Present value with climate change (T = 4.4).
+
+**Step 1:** Created a dicounted utility function using the original utility function but including the discount rate (r). This new function is the present value function. 
+
+**Present Value:** function(utility, r, t),
+                   out = (utility)/((1+r)^t)
+                   
+**Step 2:** Set T = 4.4 and solve for present value using the newly created present value function above. Sum up all of the present value values from years 1 to 200. 
+
+The sum of the present values under a climate change where T - 4.4 is equal to **198.661**. 
+
+**ii.** Present value without climate change (T = 0).
+  
+**Step 1:** Took the original utility equation and put it into the pv equation only for when T = 0. Then added up the no climate change values from years 0 to 200.
+
+The sum of the present values when there is no climate change or when T = 0 is equal to **255.273**. 
+
+**iii.** Find the percentage loss (L) in present value from climate change.
+
+**Step 1:** Used the following equation to solve for percentage loss. 
+  L = ((sum_0-sum_4.4)/(sum_0))x100 = **22.177%**
+
 
 ```{r}
 #Part 2
@@ -200,6 +283,13 @@ L = ((sum_0-sum_4.4)/(sum_0))*100
 #The percentage loss in present value utility from climate change is 22.177%. 
 ```
 
+##### B) Determine how sensitive your calculation of L is to the following parameters: T, g, η, and β. Calculated the % change in L that arises from a 10% increase in each of these parameters.
+
+**Step 1:** Increased T by 10%. A 10% increase of T = 4.4 is T = 4.84. Used the functions to solve for the new present value sum and percent loss when **T = 4.84** instead of 4.4. 
+
+The new sum when T = 4.84 is **189.421** and the percent change from a 10% increase in T resulted in a increase of **4.651%**. 
+
+
 ```{r}
 #B. Perform a sensitivity analysis to see how sensitive your calculation of L is to the following parameters: T, g, η, and β. To do so, calculate the % change in L that arises from a 10% increase in each of these parameters.
 
@@ -232,6 +322,12 @@ L_4.84 = ((sum_4.4-sum_4.84)/(sum_4.4))*100
 #Percent change for a 10% increase in T is 4.651%. 
 
 ```
+
+
+**Step 2:** Increased g by 10%. A 10% increase of g = .01 is g = .011. Used the functions to solve for the new present value sum and percent loss when **g = .011**. Keep in mind that the discount rate r will also change because g is included in the calculation for r. The new **r = 0.0105**. 
+
+The new sum when g = .011 is **198.735** and the percent change from a 10% increase in g resulted in a decrease of **-0.037%**.
+
 
 ```{r}
 # Sensivity analysis to a 10% increases in g. 
@@ -267,6 +363,11 @@ L_g = ((sum_4.4-sum_g)/(sum_4.4))*100
 
 ```
 
+**Step 3:** Increased n by 10%. A 10% increase of n = .5 is n = .55. Used the functions to solve for the new present value sum and percent loss when **n = .55**. Keep in mind that the discount rate r will also change because n is included in the calculation for r. The new **r = 0.0105**. 
+
+The new sum when n = .55 is **210.185** and the percent change from a 10% increase in n resulted in a decrease of **-5.801%**.
+
+
 ```{r}
 # Sensivitvity analysis to a 10% increases in n. 
 # 0.5(.1) = .05
@@ -300,6 +401,12 @@ L_n = ((sum_4.4-sum_n)/(sum_4.4))*100
 
 ```
 
+**Step 4:** Increased B by 10%. A 10% increase of B = .05 is B = .055. Used the functions to solve for the new present value sum and percent loss when **B = .055**. 
+
+The new sum when B = .055 is **194.165** and the percent change from a 10% increase in B resulted in a increase of **2.264%**.
+
+
+
 ```{r}
 # Sensivitvity analysis to a 10% increases in B. 
 # 0.05(.1) = .005
@@ -331,6 +438,18 @@ L_B = ((sum_4.4-sum_B)/(sum_4.4))*100
 
 ```
 
+**Sensitivty Analysis Results:** 
+
+10% increase **T: 4.651%**
+
+10% increase **g: -0.037%**
+
+10% increase **n: -5.801%**
+
+10% increase **B: 2.264%**
+
+The parameter that has the largest effect on the percent loss in present value utility is n. 
+
 ```{r}
 #Sensitivty Analysis Results: 
 # 10% increase T: 4.651
@@ -342,6 +461,20 @@ L_B = ((sum_4.4-sum_B)/(sum_4.4))*100
 
 ```
 
+##### C)
+
+```{r}
+#C. Back to the original parameters, suppose we could completely prevent climate change from occurring (so T = 0 instead of T = 4.4) but doing so would require giving up a fraction θ of consumption every year for the next 200 years. What is the maximum value of θ society would be willing to endure every year to completely prevent climate change? Call this θ∗.
+
+#Go back to the original parameters but assume T = 0. 
+#Have to give up a fraction (Theta) of every year of consumption for the 200 years. 
+
+# Create a theta function 
+
+
+#
+
+```
 
 
 
