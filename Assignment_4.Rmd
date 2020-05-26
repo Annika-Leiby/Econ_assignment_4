@@ -239,6 +239,8 @@ L_4.84 = ((sum_4.4-sum_4.84)/(sum_4.4))*100
 # 0.01+.001 = 0.011
 # g with a 10% increase is 0.011. 
 
+# Have to calculate new r because a 10% increase in g effects the ramsey equation. New r is calculated to be 0.0105. 
+
 temp_g_time <- years %>%
   mutate(climate_change = temp(t=year, T = 4.4))
 
@@ -270,6 +272,8 @@ L_g = ((sum_4.4-sum_g)/(sum_4.4))*100
 # 0.5(.1) = .05
 # 0.5+.05 = 0.55
 # g with a 10% increase is 0.55. 
+
+# Have to calculate new r because a 10% increase in n effects the ramsey equation. New r is calculated to be 0.015. 
 
 temp_n_time <- years %>%
   mutate(climate_change = temp(t=year, T = 4.4))
