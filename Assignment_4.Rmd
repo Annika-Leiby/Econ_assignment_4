@@ -469,11 +469,106 @@ The parameter that has the largest effect on the percent loss in present value u
 #Go back to the original parameters but assume T = 0. 
 #Have to give up a fraction (Theta) of every year of consumption for the 200 years. 
 
-# Create a theta function 
+# Create functions incorporating theta, where theta = o. 
+
+fraction_consumption = function(activity, g, t, o)
+{
+  out = activity*exp(g*t) * (1-o)
+  return(out)
+}
+
+fraction_utility =  function(fraction_consumption, n)
+{
+  out = (fraction_consumption^(1-n))/(1-n)
+  return(out)
+}
+
+fraction_pv <- function(fraction_utility, r, t)
+{
+  out = (fraction_utility)/((1+r)^t)
+  return(out)
+  }
+
+# find theta for the interesection where T=4.4 and o=0 and where T=0. Then find theta for the intersection. 
+# find where T=4.4 and o = 0
+
+temp_4.4_fraction <- years %>%
+  mutate(climate_change = temp(t=year, T = 4.4))
+
+activity_4.4_fraction <- temp_4.4_fraction %>%
+  mutate(climate_change = activity(t = climate_change, B = 0.05))
+
+consumption_4.4_fraction <- activity_4.4_fraction %>%
+  mutate(climate_change = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0))
+
+utility_4.4_fraction <- consumption_4.4_fraction %>%
+  mutate(climate_change = fraction_utility(fraction_consumption = climate_change, n = 0.5))
+
+pv_4.4_fraction <- utility_4.4_fraction %>%
+  mutate(climate_change = fraction_pv(fraction_utility = climate_change, t = year, r = 0.01))
+
+view(pv_4.4_fraction)
+
+# present value for T=4.4 and o = 0
+
+sum_4.4_fraction <- sum(pv_4.4_fraction$climate_change)
+
+view(sum_4.4_fraction)
 
 
-#
+# find where T = 0. Find o. 
 
+temp_0_fraction <- years %>%
+  mutate(climate_change = temp(t=year, T = 0))
+
+activity_0_fraction <- temp_0_fraction %>%
+  mutate(climate_change = activity(t = climate_change, B = 0.05))
+
+consumption_0_fraction <- activity_0_fraction %>%
+  mutate(zero = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0),
+         point_one = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.1),
+         point_two = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.2),
+         point_three = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.3),
+         point_four = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.4),
+         point_five = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.5),
+         point_six = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.6),
+         point_seven = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.7),
+         point_eight = fraction_consumption(activity = climate_change, g = 0.01, t = year, o = 0.8))
+
+utility_0_fraction <- consumption_0_fraction %>%
+  mutate(zero = fraction_utility(fraction_consumption = zero, n = 0.5),
+         point_one = fraction_utility(fraction_consumption = point_one, n = 0.5),
+         point_two = fraction_utility(fraction_consumption = point_two, n = 0.5),
+         point_three = fraction_utility(fraction_consumption = point_three, n = 0.5),
+         point_four = fraction_utility(fraction_consumption = point_four, n = 0.5),
+         point_five = fraction_utility(fraction_consumption = point_five, n = 0.5),
+         point_six = fraction_utility(fraction_consumption = point_six, n = 0.5),
+         point_seven = fraction_utility(fraction_consumption = point_seven, n = 0.5),
+         point_eight = fraction_utility(fraction_consumption = point_eight, n = 0.5))
+
+pv_0_fraction <- utility_0_fraction %>%
+  mutate(zero = fraction_pv(fraction_utility = zero, t = year, r = 0.01),
+         point_one = fraction_pv(fraction_utility = point_one, t = year, r = 0.01),
+         point_two = fraction_pv(fraction_utility = point_two, t = year, r = 0.01),
+         point_three = fraction_pv(fraction_utility = point_three, t = year, r = 0.01),
+         point_four = fraction_pv(fraction_utility = point_four, t = year, r = 0.01),
+         point_five = fraction_pv(fraction_utility = point_five, t = year, r = 0.01),
+         point_six = fraction_pv(fraction_utility = point_six, t = year, r = 0.01),
+         point_seven = fraction_pv(fraction_utility = point_seven, t = year, r = 0.01),
+         point_eight = fraction_pv(fraction_utility = point_eight, t = year, r = 0.01)) %>% 
+  mutate(climate_change = NULL)
+
+# present value for each different theta
+
+sum_zero <- sum(pv_0_fraction$zero)
+
+sum_point_one <- sum(pv_0_fraction$point_one)
+
+sum_point_two <- sum(pv_0_fraction$point_two)
+
+sum_point_three <- sum(pv_0_fraction$point_three)
+
+sum_point_four <- sum(pv_0_fraction$point_four)
 ```
 
 
