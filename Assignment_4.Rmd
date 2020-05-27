@@ -108,7 +108,7 @@ utility = function(consumption, n)
 
 ##### A) Plot of temperature over time for no climate change (T = 0), modest climate change (T = 2), and extreme climate change (T = 8).
 
-Set up a data frame for years with years from 0 to 200. And used mutuate to create a column for T = 0, T = 2, T = 8. Calculate values for T = 0, T = 2, and T = 8 using the temperature equation. 
+Set up a data frame for years with years from 0 to 200. And used mutuate to create a column for T = 0, T = 2, T = 8. Calculated values for T = 0, T = 2, and T = 8 using the temperature equation. 
 
 
 ```{r}
@@ -144,7 +144,7 @@ The extreme climate scenario marked by the red line increases linearly then leve
 ##### B) Plot of consumption over time for no climate change (T = 0), modest climate change (T = 2), and extreme climate change (T = 8).
 
 
-Used the data frame for years created in part a and mutuated to create a column for T = 0, T = 2, T = 8. Values were then calculates using the consumption equation. 
+Used the data frame for years created in part a and mutuated to create a column for T = 0, T = 2, T = 8. Values were then calculated using the consumption equation. 
 ```{r}
 #B. Plot of consumption over time for no climate change, modest climate change, and extreme climate change.
 
@@ -176,7 +176,7 @@ ggplot(consumption_time, aes(x = year)) +
 
 Line plot showing the consumption changes relative to year 0 for a 200 year period for three different climate scenarios.
 
-The extreme climate scenario marked by the red line decreases from years 0 to 100 then increases very slightly from years 100 to 200. The modest climate scenario marked by the green line increases linearly up until year 100 then folows more of a exponential growth curve pattern from years 100-200. The no climate change scenario evident by the blue line looks to follow almost an exponential growth curve patter from years 0 to 200. 
+The extreme climate scenario marked by the red line decreases from years 0 to 100 then increases very slightly from years 100 to 200. The modest climate scenario marked by the green line increases linearly up until year 100 then folows more of a exponential growth curve pattern from years 100 to 200. The no climate change scenario evident by the blue line looks to follow an exponential growth curve pattern from years 0 to 200. 
 
 ##### C) Plot of undiscounted utility over time for no climate change (T = 0), modest climate change (T = 2), and extreme climate change (T = 8).
 
@@ -202,7 +202,7 @@ ggplot(utility_time, aes(x = year)) +
 
 Line plot showing the undiscounted utility changes relative to year 0 for a 200 year period for three different climate scenarios.
 
-The extreme climate scenario marked by the red line decreases from years 0 to 100 then increases very slightly from years 100 to 200. The modest climate scenario marked by the green line increases linearly up until year 100 then increases more subtanially from years 100-200. The no climate change scenario evident by the blue line also increases from years 0 to 100 then experiences more substantial increase rates from years 100-200. 
+The extreme climate scenario marked by the red line decreases from years 0 to 100 then increases very slightly from years 100 to 200. The modest climate scenario marked by the green line increases linearly up until year 100 then increases more subtanially from years 100 to 200. The no climate change scenario evident by the blue line also increases from years 0 to 100 then experiences more substantial increase rates from years 100 to 200. 
 
 ### Part 2
 
@@ -217,7 +217,7 @@ The extreme climate scenario marked by the red line decreases from years 0 to 10
                    
 **Step 2:** Set T = 4.4 and solve for present value using the newly created present value function above. Sum up all of the present value values from years 1 to 200. 
 
-The sum of the present values under a climate change where T - 4.4 is equal to **198.661**. 
+The sum of the present values under a climate change where T = 4.4 is equal to **198.661**. 
 
 **ii.** Present value without climate change (T = 0).
   
@@ -461,26 +461,26 @@ The parameter that has the largest effect on the percent loss in present value u
 
 ```
 
-##### C) Going back to the original parameters assume that we could completely prevent climate change (T=0) but doing so would require giving up a fraction (0) of consumption every year for the next 200 years. Find the maximum value of 0 society could endure to prevent climate change. 
+##### C) Going back to the original parameters assume that we could completely prevent climate change (T=0) but doing so would require giving up a fraction (o) of consumption every year for the next 200 years. Find the maximum value of o society could endure to prevent climate change. 
 
 **Step 1:** Created fraction functions for consumption, utlity, and pv incorporating theta (o). 
 
-**fraction_consumption** = function(activity, g, t, o)
+**fraction_consumption** = function(activity, g, t, o),
                            out = activity*exp(g*t) * (1-o)
   
 
-**fraction_utility** =  function(fraction_consumption, n)
+**fraction_utility** =  function(fraction_consumption, n),
                     out = (fraction_consumption^(1-n))/(1-n)
  
 
-**fraction_pv** = function(fraction_utility, r, t)
+**fraction_pv** = function(fraction_utility, r, t),
                 out = (fraction_utility)/((1+r)^t)
                 
 **Step 2:** Found theta for the interesection where T = 4.4 and o = 0 and where T=0. Then found theta at that intersection. 
 
 The present value for T = 4.4 and o = 0 was found to be 198.661. 
 
-We plugged in fractional increments of 0.1 from 0 to 1 and calculated the pv for each increment using the facrtion functions created in step 1. We compared these pv values to the pv we calculated when T = 4.4 and o = 0 and found the fractional increment that gave us a pv identical or nearly identical to 198.661. We found that this maximum value of theta (o) to prevent climate change is **0.4**. 
+We plugged in fractional increments of 0.1 from 0 to 1 and calculated the pv for each increment using the fraction functions created in step 1. We compared these pv values to the pv we calculated when T = 4.4 and o = 0 and found the fractional increment that gave us a pv identical or nearly identical to 198.661. We found that this pv value occurred at a maximum value of theta (o) of **0.4**. 
 
 
 
@@ -595,4 +595,152 @@ sum_point_four <- sum(pv_0_fraction$point_four)
 ```
 
 
+```{r}
+dc_fx = function(d, n, g)
+{out = d + n*g
+  return(out)}
+```
+
+```{r}
+# climate change is a hoax, T = 0
+
+T0 <- years %>% 
+mutate(
+  
+  tempT0 = temp(t = year, T =0),
+  
+  activityT0 = activity(temp = tempT0, B = 0.05),
+        
+  consumptionT0 = consumption(t = year, activity = activityT0, g = g),
+  
+  utilityT0 = utility(consumption = consumptionT0, n = n),
+  
+  discount = utilityT0/((1+dc_fx(d = d, n = n, g = g))^year))
+
+Ut_T0 <- sum(T0$utilityT0)
+
+
+
+
+```
+
+##### D) Suppose we are uncertain about T, but it has the following probability distribution: T = 2 (with probability .2), T = 4 (with probability .5), and T = 6 (with probability .3). Calculate theta (o) under uncertainty over T.
+
+**Step 1**: Calculate with T = 2 at 20% probability. 
+
+We found that without discounting the utility function gave us a present value of **640.613** and with including discounting the function gave us a net present value of **241.597**.
+
+**Step 2**: Calculate with T = 4 at 50% probability. 
+
+We found that without discounting the utility function gave us a present value of **514.5399** and with including discounting the function gave us a net present value of **206.907**.
+
+**Step 3**: Calculate with T = 6 at 30% probability. 
+
+We found that without discounting the utility function gave us a present value of **367.9106** and with including discounting the function gave us a net present value of **165.2395**.
+
+**Step 4**: Calculated the final theta both with discouting and excluding discounting. 
+
+Without discounting:
+exp_ut <- (uT2*0.2) + (uT4*0.5) + (uT6*0.3)
+
+final_theta_nd <- (exp_ut/Ut_T0)^2
+
+Final theta without discounting: **0.5147023**
+
+With discounting:
+d_exp_ut <- (dT2*0.2) + (dT4*0.5) + (dT6*0.3)
+final_theta_d <- (d_exp_ut/Ut_T0)^2
+
+Final theta with discounting: **0.08489526**
+
+
+
+```{r}
+# 2.(d) Climate change is no longer a hoax and nobody knows how intense or likely it will be
+
+# T = 2 at 20% probability
+
+T2 <- years %>% 
+mutate(
+  
+  tempT2     = temp(t = year, T =2),
+  
+  activityT2 = activity(temp = tempT2, B = 0.05),
+        
+  consumptionT2 = consumption(t = year, activity = activityT2, g = 0.01),
+  
+  utilityT2 = utility(consumption = consumptionT2, n = n),
+  
+  discountT2 = utilityT2/((1+dc_fx(d = 0.005, n = 0.5, g = 0.01))^year))
+
+uT2 <- sum(T2$utilityT2)
+dT2 <- sum(T2$discountT2)
+
+
+
+```
+
+```{r}
+# T = 4 at 50% probability
+
+T4 <- years %>% 
+mutate(
+  
+  tempT4 = temp(t = year, T = 4),
+  
+  activityT4 = activity(temp = tempT4, B = 0.05),
+        
+  consumptionT4 = consumption(t = year, activity = activityT4, g = 0.01),
+  
+  utilityT4 = utility(consumption = consumptionT4, n = n),
+  
+  discount = utilityT4/((1+dc_fx(d = d, n = n, g = g))^year))
+
+uT4 <- sum(T4$utility)
+dT4 <- sum(T4$discount)
+
+
+```
+
+
+```{r}
+
+# T = 6 at 30% probability
+
+T6 <- years %>% 
+mutate(
+  
+  tempT6 = temp(t = year, T = 6),
+  
+  activityT6 = activity(temp = tempT6, B = 0.05),
+        
+  consumptionT6 = consumption(t = year, activity = activityT6, g = 0.01),
+  
+  utilityT6 = utility(consumption = consumptionT6, n = n),
+  
+  discount = utilityT6/((1+dc_fx(d = d, n = n, g = 0.01))^year))
+
+uT6 <- sum(T6$utility)
+dT6 <- sum(T6$discount)
+
+
+```
+
+
+```{r}
+# Calculate the final theta
+
+# without discounting
+exp_ut <- (uT2*0.2) + (uT4*0.5) + (uT6*0.3)
+
+final_theta_nd <- (exp_ut/Ut_T0)^2
+
+
+
+# with discounting
+d_exp_ut <- (dT2*0.2) + (dT4*0.5) + (dT6*0.3)
+final_theta_d <- (d_exp_ut/Ut_T0)^2
+
+
+```
 
