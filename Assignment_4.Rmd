@@ -461,7 +461,30 @@ The parameter that has the largest effect on the percent loss in present value u
 
 ```
 
-##### C)
+##### C) Going back to the original parameters assume that we could completely prevent climate change (T=0) but doing so would require giving up a fraction (0) of consumption every year for the next 200 years. Find the maximum value of 0 society could endure to prevent climate change. 
+
+**Step 1:** Created fraction functions for consumption, utlity, and pv incorporating theta (o). 
+
+**fraction_consumption** = function(activity, g, t, o)
+                           out = activity*exp(g*t) * (1-o)
+  
+
+**fraction_utility** =  function(fraction_consumption, n)
+                    out = (fraction_consumption^(1-n))/(1-n)
+ 
+
+**fraction_pv** = function(fraction_utility, r, t)
+                out = (fraction_utility)/((1+r)^t)
+                
+**Step 2:** Found theta for the interesection where T = 4.4 and o = 0 and where T=0. Then found theta at that intersection. 
+
+The present value for T = 4.4 and o = 0 was found to be 198.661. 
+
+We plugged in fractional increments of 0.1 from 0 to 1 and calculated the pv for each increment using the facrtion functions created in step 1. We compared these pv values to the pv we calculated when T = 4.4 and o = 0 and found the fractional increment that gave us a pv identical or nearly identical to 198.661. We found that this maximum value of theta (o) to prevent climate change is **0.4**. 
+
+
+
+ 
 
 ```{r}
 #C. Back to the original parameters, suppose we could completely prevent climate change from occurring (so T = 0 instead of T = 4.4) but doing so would require giving up a fraction θ of consumption every year for the next 200 years. What is the maximum value of θ society would be willing to endure every year to completely prevent climate change? Call this θ∗.
@@ -483,7 +506,7 @@ fraction_utility =  function(fraction_consumption, n)
   return(out)
 }
 
-fraction_pv <- function(fraction_utility, r, t)
+fraction_pv = function(fraction_utility, r, t)
 {
   out = (fraction_utility)/((1+r)^t)
   return(out)
